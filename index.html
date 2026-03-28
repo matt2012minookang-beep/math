@@ -379,90 +379,73 @@
 
     @media (max-width: 720px){
       body{ padding:10px; }
-
       .wrap{
         padding:14px;
         border-radius:20px;
       }
-
       .card{
         padding:14px;
         border-radius:18px;
       }
-
       .eq-inputs{
         grid-template-columns:1fr;
         gap:8px;
       }
-
       .field{
         min-height:54px;
         font-size:19px;
         padding:12px 14px;
       }
-
       .relation-btn{
         width:100%;
         height:50px;
         font-size:22px;
       }
-
       .relation-menu{
         left:50%;
         transform:translateX(-50%);
         min-width:260px;
         grid-template-columns: repeat(3, 1fr);
       }
-
       .remove-btn{
         width:100%;
         height:48px;
         border-radius:12px;
       }
-
       .toolbar{ gap:6px; }
-
       .tool-btn{
         min-width:calc(25% - 5px);
         height:46px;
         font-size:17px;
       }
-
       .controls{
         display:grid;
         grid-template-columns:1fr 1fr;
         gap:8px;
       }
-
       .controls button{
         width:100%;
         min-height:48px;
         padding:12px 10px;
         font-size:15px;
       }
-
       .controls button:first-child{
         grid-column:1 / -1;
       }
-
       .eq-preview{
         min-height:58px;
         font-size:20px;
         padding:8px;
       }
-
       .inline-result{
         padding:14px;
         border-radius:16px;
       }
-
       .result-item{
         padding:12px 14px;
         border-radius:14px;
       }
-
       .msg{ font-size:15px; }
-
       .help{
         font-size:13px;
         padding:12px 14px;
@@ -474,8 +457,8 @@
   <div class="wrap">
     <h1 class="title">방정식 계산 사이트</h1>
     <div class="desc">
-      `π`, `log`, `ln`, `e`, `E`, `!`, `sin`, `cos`, `tan`까지 넣은 버전이야.
-      삼각함수는 <b>도</b> 기준으로 계산하고, 해는 가능한 경우 <b>정확한 값 + 근사값</b>을 같이 보여줘.
+      특수각은 정확한 값으로 먼저 처리해.  
+      그래서 <b>tan(30)</b>이면 <b>√3/3</b>과 근사값을 같이 보여줘.
     </div>
 
     <div class="top-grid">
@@ -499,20 +482,19 @@
             <div class="msg">아직 계산하지 않았어.</div>
           </div>
           <div class="footer-note">
-            정확한 식과 근사값을 같이 보여주려고 시도해. 아주 복잡한 초월방정식은 브라우저 한 파일 버전 한계가 있을 수 있어.
+            특수각은 정확한 값 우선, 그 아래에 근사값을 같이 보여줘.
           </div>
         </div>
 
         <div class="help">
           입력 예시<br>
+          • <b>tan(30)=x</b><br>
+          • <b>sin(45)=x</b><br>
+          • <b>cos(60)=x</b><br>
           • <b>x^2=13</b><br>
-          • <b>sin(x)=1/2</b> <span style="opacity:.8">(도 기준)</span><br>
           • <b>log(100)=2</b><br>
           • <b>ln(e^2)=2</b><br>
-          • <b>5!=120</b><br>
-          • <b>1E3=1000</b><br>
-          • <b>π*x=180</b><br>
-          • 한글 자판으로 <b>ㅌ</b> 입력 시 자동으로 <b>x</b>로 바뀜
+          • <b>5!=120</b>
         </div>
       </div>
 
@@ -536,11 +518,9 @@
           </div>
 
           <div class="mini">
-            <div class="mini-label">입력 팁</div>
+            <div class="mini-label">특수각</div>
             <div class="mini-value">
-              `sin`, `cos`, `tan`은 도 기준으로 변환해서 계산해.<br>
-              `log`는 상용로그, `ln`은 자연로그로 처리해.<br>
-              `E`는 과학적 표기법으로 인식해.
+              0°, 30°, 45°, 60°, 90°, 120°, 135°, 150°, 180°, 210°, 225°, 240°, 270°, 300°, 315°, 330°, 360° 를 정확값으로 처리해.
             </div>
           </div>
         </div>
@@ -571,6 +551,27 @@
 
     const ALLOWED_REGEX = /[^0-9a-zA-Z+\-*/^().,_ =<>√!π]/g;
 
+    const EXACT_TRIG = {
+      sin: {
+        0:'0', 30:'1/2', 45:'sqrt(2)/2', 60:'sqrt(3)/2', 90:'1',
+        120:'sqrt(3)/2', 135:'sqrt(2)/2', 150:'1/2', 180:'0',
+        210:'-1/2', 225:'-sqrt(2)/2', 240:'-sqrt(3)/2', 270:'-1',
+        300:'-sqrt(3)/2', 315:'-sqrt(2)/2', 330:'-1/2', 360:'0'
+      },
+      cos: {
+        0:'1', 30:'sqrt(3)/2', 45:'sqrt(2)/2', 60:'1/2', 90:'0',
+        120:'-1/2', 135:'-sqrt(2)/2', 150:'-sqrt(3)/2', 180:'-1',
+        210:'-sqrt(3)/2', 225:'-sqrt(2)/2', 240:'-1/2', 270:'0',
+        300:'1/2', 315:'sqrt(2)/2', 330:'sqrt(3)/2', 360:'1'
+      },
+      tan: {
+        0:'0', 30:'sqrt(3)/3', 45:'1', 60:'sqrt(3)',
+        120:'-sqrt(3)', 135:'-1', 150:'-sqrt(3)/3',
+        180:'0', 210:'sqrt(3)/3', 225:'1', 240:'sqrt(3)',
+        300:'-sqrt(3)', 315:'-1', 330:'-sqrt(3)/3', 360:'0'
+      }
+    };
+
     function showWarning(text=''){
       warning.textContent = text;
     }
@@ -588,6 +589,40 @@
       v = v.replace(/×/g, '*').replace(/÷/g, '/');
       v = v.replace(ALLOWED_REGEX, '');
       return v;
+    }
+
+    function normalizeAngleDeg(n){
+      let a = Number(n);
+      if (!Number.isFinite(a)) return null;
+      a = ((a % 360) + 360) % 360;
+      if (Math.abs(a - Math.round(a)) < 1e-10) a = Math.round(a);
+      return a;
+    }
+
+    function replaceExactTrig(expr){
+      let s = expr;
+
+      const funcs = ['sin', 'cos', 'tan'];
+
+      for (const fn of funcs){
+        let changed = true;
+        while (changed){
+          changed = false;
+          const regex = new RegExp(fn + '\\\\(([-+]?\\d+(?:\\.\\d+)?)\\)', 'g');
+          s = s.replace(regex, (match, angleStr) => {
+            const ang = normalizeAngleDeg(angleStr);
+            if (ang === null) return match;
+            const exact = EXACT_TRIG[fn][String(ang)];
+            if (exact !== undefined){
+              changed = true;
+              return '(' + exact + ')';
+            }
+            return match;
+          });
+        }
+      }
+
+      return s;
     }
 
     function isAlphaNum(ch){
@@ -733,6 +768,7 @@
       s = s.replace(/\s+/g, '');
       s = s.replace(/×/g, '*').replace(/÷/g, '/');
       s = replaceScientificE(s);
+      s = replaceExactTrig(s);
       s = replaceConstants(s);
       s = convertRootsToPowers(s);
       s = convertFactorial(s);
@@ -743,7 +779,7 @@
 
     function detectVariablesFromText(text){
       const raw = text.match(/[a-zA-Z]+/g) || [];
-      const banned = new Set(['e', 'pi', 'sin', 'cos', 'tan', 'log', 'ln', 'factorial']);
+      const banned = new Set(['e', 'pi', 'sin', 'cos', 'tan', 'log', 'ln', 'factorial', 'sqrt']);
       return [...new Set(raw.filter(v => !banned.has(v.toLowerCase())))];
     }
 
@@ -781,6 +817,7 @@
           .replace(/√\(([^()]*)\)/g, 'sqrt($1)')
           .replace(/√([a-zA-Z0-9.π]+)/g, 'sqrt($1)');
         latexSrc = latexSrc.replace(/π/g, 'pi');
+        latexSrc = replaceExactTrig(latexSrc);
         return nerdamer.convertToLaTeX(latexSrc);
       }catch(e){
         try{
@@ -1057,27 +1094,32 @@
       resultList.appendChild(item);
     }
 
+    function formatApprox(expr){
+      try{
+        const approx = nerdamer(String(expr)).evaluate().text();
+        const num = Number(approx);
+        if (Number.isFinite(num)) {
+          return num.toFixed(12).replace(/\.?0+$/, '');
+        }
+        return approx;
+      } catch {
+        return null;
+      }
+    }
+
     function addExactApproxResult(varName, exactExpr){
       let exactLatex = '';
-      let approxLatex = '';
-
       try{
         exactLatex = `${varName} = ${nerdamer.convertToLaTeX(String(exactExpr))}`;
       }catch(e){
         exactLatex = `${varName} = ${String(exactExpr)}`;
       }
-
-      try{
-        const approx = nerdamer(String(exactExpr)).evaluate().text();
-        const approxNum = Number(approx);
-        const prettyApprox = Number.isFinite(approxNum) ? approxNum.toFixed(12).replace(/\.?0+$/, '') : approx;
-        approxLatex = `\\text{근사값}\\; ${varName} \\approx ${prettyApprox}`;
-      }catch(e){
-        approxLatex = '';
-      }
-
       addLatexResult(exactLatex);
-      if(approxLatex) addLatexResult(approxLatex);
+
+      const approx = formatApprox(exactExpr);
+      if(approx !== null){
+        addLatexResult(`\\text{근사값}\\; ${varName} \\approx ${approx}`);
+      }
     }
 
     function getSolutionsStringArray(solutionObj){
@@ -1113,8 +1155,8 @@
         if(relation === '<=') ok = (l <= r);
 
         addMessage(ok ? '참이야.' : '거짓이야.', !ok);
-        addLatexResult(`\\text{왼쪽} \\approx ${l}`);
-        addLatexResult(`\\text{오른쪽} \\approx ${r}`);
+        addLatexResult(`\\text{왼쪽} \\approx ${formatApprox(left) ?? l}`);
+        addLatexResult(`\\text{오른쪽} \\approx ${formatApprox(right) ?? r}`);
       } catch (e){
         addMessage('숫자식 계산에 실패했어. 입력을 다시 확인해줘.', true);
       }
