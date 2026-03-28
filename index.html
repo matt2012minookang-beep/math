@@ -19,7 +19,6 @@
       --bg2:#1e293b;
       --panel:#111827d8;
       --line:#334155;
-      --line2:#475569;
       --text:#e5eefc;
       --sub:#9fb0cc;
       --accent:#60a5fa;
@@ -94,6 +93,7 @@
     }
 
     .eq-row{
+      position:relative;
       background:#0b1220;
       border:1px solid #334155;
       border-radius:18px;
@@ -131,11 +131,60 @@
       font-weight:600;
     }
 
-    .eq-sign{
-      font-size:34px;
-      font-weight:900;
+    .relation-btn{
+      min-width:72px;
+      height:52px;
+      border:none;
+      border-radius:12px;
+      background:#172133;
       color:#dbeafe;
-      user-select:none;
+      font-size:24px;
+      font-weight:900;
+      border:1px solid #334155;
+      cursor:pointer;
+      position:relative;
+    }
+
+    .relation-btn:hover{
+      background:#1d2b42;
+      transform:translateY(-1px);
+    }
+
+    .relation-menu{
+      position:absolute;
+      top:64px;
+      left:50%;
+      transform:translateX(-50%);
+      z-index:30;
+      display:none;
+      grid-template-columns: repeat(3, minmax(56px, 1fr));
+      gap:8px;
+      background:#0f172a;
+      border:1px solid #334155;
+      border-radius:14px;
+      padding:10px;
+      box-shadow:0 18px 40px rgba(0,0,0,.35);
+      min-width:220px;
+    }
+
+    .relation-menu.show{
+      display:grid;
+    }
+
+    .relation-item{
+      height:42px;
+      border:none;
+      border-radius:10px;
+      background:#172133;
+      color:#e5eefc;
+      font-size:18px;
+      font-weight:900;
+      cursor:pointer;
+      border:1px solid #334155;
+    }
+
+    .relation-item:hover{
+      background:#1d2b42;
     }
 
     .remove-btn{
@@ -367,16 +416,24 @@
         gap:8px;
       }
 
-      .eq-sign{
-        text-align:center;
-        font-size:30px;
-        line-height:1;
-      }
-
       .field{
         min-height:54px;
         font-size:19px;
         padding:12px 14px;
+      }
+
+      .relation-btn{
+        width:100%;
+        height:50px;
+        font-size:22px;
+      }
+
+      .relation-menu{
+        left:50%;
+        right:auto;
+        transform:translateX(-50%);
+        min-width:260px;
+        grid-template-columns: repeat(3, 1fr);
       }
 
       .remove-btn{
@@ -444,8 +501,8 @@
   <div class="wrap">
     <h1 class="title">방정식 계산 사이트</h1>
     <div class="desc">
-      1차, 2차, 고차방정식과 여러 미지수의 연립방정식을 계산할 수 있어.<br>
-      결과는 입력창 바로 아래에 나오고, 모바일에서도 누르기 편하게 바꿨어.
+      오른쪽 칸을 선택한 상태면 버튼도 오른쪽에 입력돼. 가운데 관계기호 버튼을 누르면
+      <b>=, &gt;, &lt;, &gt;=, &lt;=</b> 로 바꿀 수 있어.
     </div>
 
     <div class="top-grid">
@@ -464,23 +521,22 @@
 
         <div class="inline-result">
           <div class="chip">결과</div>
-          <div class="result-title">해</div>
+          <div class="result-title">해 / 판정</div>
           <div id="resultList" class="result-list">
             <div class="msg">아직 계산하지 않았어.</div>
           </div>
           <div class="footer-note">
-            해 찾기를 누르면 결과가 여기 바로 표시돼.
+            등식은 해를 계산하고, 부등식은 참/거짓이나 현재 버전에서 가능한 범위만 안내해.
           </div>
         </div>
 
         <div class="help">
           입력 예시<br>
           • <b>x^2=9</b><br>
-          • <b>x^3-6*x^2+11*x-6=0</b><br>
           • <b>x+y=5</b><br>
-          • <b>2*x-y=1</b><br>
           • <b>√x=3</b><br>
-          • <b>√(x+1)=5</b><br>
+          • <b>x+1&gt;3</b><br>
+          • <b>2*x&lt;=8</b><br>
           • 한글 자판으로 <b>ㅌ</b>을 입력하면 자동으로 <b>x</b>로 바뀜
         </div>
       </div>
@@ -507,9 +563,8 @@
           <div class="mini">
             <div class="mini-label">입력 팁</div>
             <div class="mini-value">
-              √ 버튼을 누르면 루트가 들어가고,<br>
-              / 는 미리보기에서 분수처럼 보이고,<br>
-              ^ 는 지수처럼 보이게 렌더링돼.
+              마지막으로 선택한 칸에 버튼 입력이 들어가고,<br>
+              가운데 기호 버튼으로 등식/부등식을 바꿀 수 있어.
             </div>
           </div>
         </div>
@@ -529,6 +584,7 @@
     const modeText = document.getElementById('modeText');
 
     const MAX_EQUATIONS = 8;
+    const RELATIONS = ['=', '>', '<', '>=', '<='];
 
     const KOR_TO_ENG = {
       'ㅂ':'q','ㅈ':'w','ㄷ':'e','ㄱ':'r','ㅅ':'t','ㅛ':'y','ㅕ':'u','ㅑ':'i','ㅐ':'o','ㅔ':'p',
@@ -537,7 +593,7 @@
       'ㅃ':'Q','ㅉ':'W','ㄸ':'E','ㄲ':'R','ㅆ':'T','ㅒ':'O','ㅖ':'P'
     };
 
-    const ALLOWED_REGEX = /[^0-9a-zA-Z+\-*/^().,_ =√]/g;
+    const ALLOWED_REGEX = /[^0-9a-zA-Z+\-*/^().,_ =<>√]/g;
 
     function showWarning(text=''){
       warning.textContent = text;
@@ -624,6 +680,14 @@
       return [...new Set(raw.filter(v => !banned.has(v.toLowerCase())))];
     }
 
+    function relationToLatex(rel){
+      if(rel === '>=') return '\\ge';
+      if(rel === '<=') return '\\le';
+      if(rel === '>') return '>';
+      if(rel === '<') return '<';
+      return '=';
+    }
+
     function renderLatex(el, latex){
       try{
         katex.render(latex, el, {
@@ -656,15 +720,20 @@
       }
     }
 
+    function closeAllRelationMenus(){
+      document.querySelectorAll('.relation-menu').forEach(menu => menu.classList.remove('show'));
+    }
+
     function updatePreviewForRow(row){
       const left = row.querySelector('.left-input').value.trim();
       const right = row.querySelector('.right-input').value.trim();
       const preview = row.querySelector('.eq-preview');
+      const relation = row.dataset.relation || '=';
 
       const leftLatex = displayExprToLatex(left);
       const rightLatex = displayExprToLatex(right);
 
-      renderLatex(preview, `${leftLatex} = ${rightLatex}`);
+      renderLatex(preview, `${leftLatex} ${relationToLatex(relation)} ${rightLatex}`);
     }
 
     function getRows(){
@@ -678,24 +747,31 @@
 
         const leftDisplay = leftInput.value;
         const rightDisplay = rightInput.value;
+        const relation = row.dataset.relation || '=';
 
         const left = normalizeExpr(leftDisplay);
         const right = normalizeExpr(rightDisplay);
 
-        return { row, left, right, leftDisplay, rightDisplay };
+        return { row, left, right, relation, leftDisplay, rightDisplay };
       }).filter(item => item.left || item.right);
     }
 
     function updateAnalyzer(){
       const eqs = getEquationObjects();
-      const text = eqs.map(e => `${e.left}=${e.right}`).join(' ');
+      const text = eqs.map(e => `${e.left}${e.relation}${e.right}`).join(' ');
       const vars = detectVariablesFromText(text);
+      const hasIneq = eqs.some(e => e.relation !== '=');
 
       eqCount.textContent = String(eqs.length);
       varList.textContent = vars.length ? vars.join(', ') : '없음';
 
       if(eqs.length === 0){
         modeText.textContent = '입력을 기다리는 중';
+        return;
+      }
+
+      if(hasIneq){
+        modeText.textContent = '부등식 / 혼합식 포함';
         return;
       }
 
@@ -708,6 +784,13 @@
       }else{
         modeText.textContent = '식 구조 분석 중';
       }
+    }
+
+    function setActiveSide(row, side){
+      row.dataset.activeSide = side;
+      row.querySelectorAll('.field').forEach(f => f.dataset.active = 'false');
+      const target = side === 'right' ? row.querySelector('.right-input') : row.querySelector('.left-input');
+      target.dataset.active = 'true';
     }
 
     function insertAtCursor(input, text){
@@ -736,12 +819,8 @@
         else btn.textContent = symbol;
 
         btn.addEventListener('click', () => {
-          const active = document.activeElement;
-          let target = leftInput;
-
-          if(active === rightInput) target = rightInput;
-          else if(active === leftInput) target = leftInput;
-
+          const activeSide = row.dataset.activeSide || 'left';
+          const target = activeSide === 'right' ? rightInput : leftInput;
           insertAtCursor(target, symbol);
         });
 
@@ -751,7 +830,40 @@
       row.appendChild(toolbar);
     }
 
-    function createEquationRow(leftValue='', rightValue=''){
+    function createRelationPicker(row, relationBtn){
+      const menu = document.createElement('div');
+      menu.className = 'relation-menu';
+
+      RELATIONS.forEach(rel => {
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.className = 'relation-item';
+        item.textContent = rel;
+
+        item.addEventListener('click', () => {
+          row.dataset.relation = rel;
+          relationBtn.textContent = rel;
+          menu.classList.remove('show');
+          updatePreviewForRow(row);
+          updateAnalyzer();
+        });
+
+        menu.appendChild(item);
+      });
+
+      relationBtn.parentElement.appendChild(menu);
+
+      relationBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const willOpen = !menu.classList.contains('show');
+        closeAllRelationMenus();
+        if(willOpen) menu.classList.add('show');
+      });
+
+      return menu;
+    }
+
+    function createEquationRow(leftValue='', rightValue='', relation='='){
       if(getRows().length >= MAX_EQUATIONS){
         showWarning(`식은 최대 ${MAX_EQUATIONS}개까지 추가할 수 있어.`);
         return;
@@ -759,11 +871,13 @@
 
       const row = document.createElement('div');
       row.className = 'eq-row';
+      row.dataset.relation = relation;
+      row.dataset.activeSide = 'left';
 
       row.innerHTML = `
         <div class="eq-inputs">
           <input class="field left-input" type="text" autocomplete="off" spellcheck="false" placeholder="왼쪽 식 입력" value="">
-          <div class="eq-sign">=</div>
+          <button class="relation-btn" type="button">${relation}</button>
           <input class="field right-input" type="text" autocomplete="off" spellcheck="false" placeholder="오른쪽 식 입력" value="">
           <button class="remove-btn" type="button">×</button>
         </div>
@@ -774,12 +888,15 @@
 
       const leftInput = row.querySelector('.left-input');
       const rightInput = row.querySelector('.right-input');
+      const relationBtn = row.querySelector('.relation-btn');
       const removeBtn = row.querySelector('.remove-btn');
 
       leftInput.value = leftValue;
       rightInput.value = rightValue;
 
+      createRelationPicker(row, relationBtn);
       createToolbar(row, leftInput, rightInput);
+      setActiveSide(row, 'left');
 
       function onInput(e){
         const before = e.target.value;
@@ -792,8 +909,13 @@
           showWarning('');
         }
 
+        setActiveSide(row, e.target === rightInput ? 'right' : 'left');
         updatePreviewForRow(row);
         updateAnalyzer();
+      }
+
+      function onFocus(e){
+        setActiveSide(row, e.target === rightInput ? 'right' : 'left');
       }
 
       function onPaste(input, e){
@@ -808,6 +930,8 @@
 
       [leftInput, rightInput].forEach(input => {
         input.addEventListener('input', onInput);
+        input.addEventListener('focus', onFocus);
+        input.addEventListener('click', onFocus);
         input.addEventListener('paste', e => onPaste(input, e));
         input.addEventListener('keydown', e => {
           if(e.key === 'Enter') solveAll();
@@ -818,6 +942,9 @@
         if(getRows().length <= 1){
           leftInput.value = '';
           rightInput.value = '';
+          row.dataset.relation = '=';
+          relationBtn.textContent = '=';
+          setActiveSide(row, 'left');
           updatePreviewForRow(row);
           updateAnalyzer();
           return;
@@ -868,16 +995,20 @@
       return [text];
     }
 
-    function solveSingleNoVariable(left, right){
+    function solveSingleNoVariable(left, right, relation){
       try{
-        const l = nerdamer(left).evaluate().text();
-        const r = nerdamer(right).evaluate().text();
-        if(l === r){
-          addMessage('미지수가 없고, 두 식이 서로 같아. 항상 참이야.');
-        }else{
-          addMessage('미지수가 없고, 두 식이 서로 달라. 해가 없어.', true);
-        }
-      }catch(e){
+        const l = Number(nerdamer(left).evaluate().text());
+        const r = Number(nerdamer(right).evaluate().text());
+        let ok = false;
+
+        if(relation === '=') ok = (l === r);
+        if(relation === '>') ok = (l > r);
+        if(relation === '<') ok = (l < r);
+        if(relation === '>=') ok = (l >= r);
+        if(relation === '<=') ok = (l <= r);
+
+        addMessage(ok ? '참이야.' : '거짓이야.', !ok);
+      } catch (e){
         addMessage('숫자식 계산에 실패했어. 입력을 다시 확인해줘.', true);
       }
     }
@@ -945,9 +1076,45 @@
       }
     }
 
+    function solveSimpleLinearInequality(left, right, relation, variable){
+      try{
+        const diff = nerdamer(`expand((${left})-(${right}))`).toString();
+        const a = Number(nerdamer(`diff(${diff}, ${variable})`).evaluate().text());
+        const bExpr = nerdamer(diff).sub(variable, 0).evaluate().text();
+        const b = Number(bExpr);
+
+        if(!Number.isFinite(a) || !Number.isFinite(b) || a === 0){
+          addMessage('이 부등식은 현재 버전에서 자동 해석 범위를 벗어났어.', true);
+          return;
+        }
+
+        const boundary = -b / a;
+        let finalRelation = relation;
+
+        if(a < 0){
+          if(relation === '>') finalRelation = '<';
+          else if(relation === '<') finalRelation = '>';
+          else if(relation === '>=') finalRelation = '<=';
+          else if(relation === '<=') finalRelation = '>=';
+        }
+
+        let latex = '';
+        if(finalRelation === '>') latex = `${variable} > ${nerdamer.convertToLaTeX(String(boundary))}`;
+        if(finalRelation === '<') latex = `${variable} < ${nerdamer.convertToLaTeX(String(boundary))}`;
+        if(finalRelation === '>=') latex = `${variable} \\ge ${nerdamer.convertToLaTeX(String(boundary))}`;
+        if(finalRelation === '<=') latex = `${variable} \\le ${nerdamer.convertToLaTeX(String(boundary))}`;
+
+        addMessage('일차부등식으로 인식했어.');
+        addLatexResult(latex);
+      } catch (e){
+        addMessage('이 부등식은 현재 버전에서 자동으로 풀지 못했어.', true);
+      }
+    }
+
     function solveAll(){
       showWarning('');
       clearResults();
+      closeAllRelationMenus();
 
       const equations = getEquationObjects();
 
@@ -963,12 +1130,35 @@
         }
       }
 
-      const allText = equations.map(e => `${e.left}=${e.right}`).join(' ');
+      const allText = equations.map(e => `${e.left}${e.relation}${e.right}`).join(' ');
       const variables = detectVariablesFromText(allText);
+      const hasIneq = equations.some(e => e.relation !== '=');
+
+      if(hasIneq){
+        if(equations.length > 1){
+          addMessage('지금 버전은 부등식이 여러 줄 섞인 연립부등식은 아직 완전 지원하지 않아.', true);
+          return;
+        }
+
+        const eq = equations[0];
+
+        if(variables.length === 0){
+          solveSingleNoVariable(eq.left, eq.right, eq.relation);
+          return;
+        }
+
+        if(variables.length === 1){
+          solveSimpleLinearInequality(eq.left, eq.right, eq.relation, variables[0]);
+          return;
+        }
+
+        addMessage('미지수가 여러 개인 부등식은 아직 지원하지 않아.', true);
+        return;
+      }
 
       if(variables.length === 0){
         if(equations.length === 1){
-          solveSingleNoVariable(equations[0].left, equations[0].right);
+          solveSingleNoVariable(equations[0].left, equations[0].right, '=');
         }else{
           addMessage('미지수가 없는 식이 여러 개야. 지금은 미지수 있는 방정식 풀이용으로 쓰는 게 좋아.', true);
         }
@@ -999,14 +1189,20 @@
       equationList.innerHTML = '';
       clearResults();
       addMessage('아직 계산하지 않았어.');
-      createEquationRow('', '');
-      createEquationRow('', '');
+      createEquationRow('', '', '=');
+      createEquationRow('', '', '=');
       showWarning('');
       updateAnalyzer();
     });
 
-    createEquationRow('', '');
-    createEquationRow('', '');
+    document.addEventListener('click', (e) => {
+      if(!e.target.closest('.relation-btn') && !e.target.closest('.relation-menu')){
+        closeAllRelationMenus();
+      }
+    });
+
+    createEquationRow('', '', '=');
+    createEquationRow('', '', '=');
   </script>
 </body>
 </html>
