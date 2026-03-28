@@ -5,11 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>방정식 계산 사이트</title>
 
-  <!-- KaTeX -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 
-  <!-- Nerdamer -->
   <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/nerdamer.core.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Algebra.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Calculus.js"></script>
@@ -21,14 +19,12 @@
       --bg2:#1e293b;
       --panel:#111827d8;
       --line:#334155;
-      --line2:#475569;
       --text:#e5eefc;
       --sub:#9fb0cc;
       --accent:#60a5fa;
       --accent2:#22c55e;
       --danger:#f87171;
       --shadow:0 20px 60px rgba(0,0,0,.35);
-      --radius:24px;
     }
 
     *{box-sizing:border-box}
@@ -46,7 +42,7 @@
     }
 
     .wrap{
-      width:min(1100px, 100%);
+      width:min(1180px, 100%);
       margin:0 auto;
       background:var(--panel);
       backdrop-filter: blur(14px);
@@ -72,7 +68,7 @@
 
     .top-grid{
       display:grid;
-      grid-template-columns: 1.25fr .95fr;
+      grid-template-columns: 1.35fr .95fr;
       gap:18px;
     }
 
@@ -160,7 +156,7 @@
 
     .eq-preview{
       margin-top:12px;
-      min-height:56px;
+      min-height:64px;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -169,8 +165,34 @@
       background:rgba(15,23,42,.55);
       border:1px solid rgba(148,163,184,.16);
       border-radius:14px;
-      padding:8px;
+      padding:10px;
       font-size:24px;
+    }
+
+    .toolbar{
+      margin-top:12px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    .tool-btn{
+      min-width:54px;
+      height:42px;
+      border:none;
+      border-radius:12px;
+      background:#172133;
+      color:#e5eefc;
+      font-size:18px;
+      font-weight:900;
+      cursor:pointer;
+      border:1px solid #334155;
+      transition:.16s ease;
+    }
+
+    .tool-btn:hover{
+      transform:translateY(-1px);
+      background:#1d2b42;
     }
 
     .controls{
@@ -244,7 +266,7 @@
       color:#fecaca;
       font-size:13px;
       font-weight:800;
-      margin-top:4px;
+      margin-top:8px;
     }
 
     .result{
@@ -315,7 +337,7 @@
       line-height:1.7;
     }
 
-    @media (max-width: 900px){
+    @media (max-width: 960px){
       .top-grid{
         grid-template-columns:1fr;
       }
@@ -338,6 +360,13 @@
         min-height:56px;
         font-size:20px;
       }
+      .toolbar{
+        gap:6px;
+      }
+      .tool-btn{
+        min-width:48px;
+        height:40px;
+      }
     }
   </style>
 </head>
@@ -346,7 +375,7 @@
     <h1 class="title">방정식 계산 사이트</h1>
     <div class="desc">
       1차, 2차, 고차방정식과 여러 미지수의 연립방정식을 계산할 수 있어.<br>
-      왼쪽 식과 오른쪽 식을 입력하고 <b>해 찾기</b>를 누르면 돼. 한글은 자동 차단돼.
+      한글 자판으로 잘못 입력한 영문도 자동 보정하고, 수학기호 버튼과 루트 버튼도 들어가 있어.
     </div>
 
     <div class="top-grid">
@@ -369,9 +398,10 @@
           • <b>x^3-6*x^2+11*x-6=0</b><br>
           • <b>x+y=5</b><br>
           • <b>2*x-y=1</b><br>
-          • <b>(x+1)^2=16</b><br>
-          • 루트는 <b>x^1/2</b> 또는 <b>(x+3)^(1/2)</b> 처럼 입력<br>
-          • 곱셈은 <b>*</b>, 나눗셈은 <b>/</b>, 제곱/거듭제곱은 <b>^</b>
+          • <b>√x=3</b><br>
+          • <b>√(x+1)=5</b><br>
+          • 곱셈은 <b>*</b>, 나눗셈은 <b>/</b>, 거듭제곱은 <b>^</b><br>
+          • 한글 자판으로 <b>ㅌ</b>을 입력하면 자동으로 <b>x</b>로 바뀜
         </div>
       </div>
 
@@ -393,6 +423,15 @@
             <div class="mini-label">판단</div>
             <div id="modeText" class="mini-value">입력을 기다리는 중</div>
           </div>
+
+          <div class="mini">
+            <div class="mini-label">입력 팁</div>
+            <div class="mini-value">
+              √ 버튼을 누르면 루트가 들어가고,<br>
+              / 는 미리보기에서 분수처럼 보이고,<br>
+              ^ 는 지수로 보이게 렌더링돼.
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -404,8 +443,8 @@
         <div class="msg">아직 계산하지 않았어.</div>
       </div>
       <div class="footer-note">
-        이 버전은 브라우저 한 파일로 돌아가도록 만든 버전이라 매우 복잡한 비선형 연립방정식이나 특수한 경우는 한계가 있을 수 있어.
-        하지만 일반적인 고차방정식과 기본 연립방정식은 계산 가능하게 구성했어.
+        이 버전은 브라우저 한 파일 버전이라서 아주 복잡한 특수식은 한계가 있을 수 있지만,
+        일반적인 고차방정식과 기본적인 연립방정식은 계산 가능하게 구성했어.
       </div>
     </div>
   </div>
@@ -421,16 +460,32 @@
     const varList = document.getElementById('varList');
     const modeText = document.getElementById('modeText');
 
-    const HANGUL_REGEX = /[ㄱ-ㅎㅏ-ㅣ가-힣]/g;
-    const ALLOWED_REGEX = /[^0-9a-zA-Z+\-*/^().,_ =]/g;
     const MAX_EQUATIONS = 8;
+
+    const KOR_TO_ENG = {
+      'ㅂ':'q','ㅈ':'w','ㄷ':'e','ㄱ':'r','ㅅ':'t','ㅛ':'y','ㅕ':'u','ㅑ':'i','ㅐ':'o','ㅔ':'p',
+      'ㅁ':'a','ㄴ':'s','ㅇ':'d','ㄹ':'f','ㅎ':'g','ㅗ':'h','ㅓ':'j','ㅏ':'k','ㅣ':'l',
+      'ㅋ':'z','ㅌ':'x','ㅊ':'c','ㅍ':'v','ㅠ':'b','ㅜ':'n','ㅡ':'m',
+      'ㅃ':'Q','ㅉ':'W','ㄸ':'E','ㄲ':'R','ㅆ':'T','ㅒ':'O','ㅖ':'P'
+    };
+
+    const ALLOWED_REGEX = /[^0-9a-zA-Z+\-*/^().,_ =√]/g;
 
     function showWarning(text=''){
       warning.textContent = text;
     }
 
+    function convertKoreanKeyboardToEnglish(value){
+      let out = '';
+      for(const ch of value){
+        out += KOR_TO_ENG[ch] !== undefined ? KOR_TO_ENG[ch] : ch;
+      }
+      return out;
+    }
+
     function sanitizeInput(value){
-      let v = value.replace(HANGUL_REGEX, '');
+      let v = convertKoreanKeyboardToEnglish(value);
+      v = v.replace(/×/g, '*').replace(/÷/g, '/');
       v = v.replace(ALLOWED_REGEX, '');
       return v;
     }
@@ -439,8 +494,61 @@
       let s = expr.trim();
       s = s.replace(/\s+/g, '');
       s = s.replace(/×/g, '*').replace(/÷/g, '/');
-      s = s.replace(/√\(([^()]+)\)/g, '($1)^(1/2)');
-      s = s.replace(/√([a-zA-Z0-9.]+)/g, '($1)^(1/2)');
+
+      s = convertRootsToPowers(s);
+
+      return s;
+    }
+
+    function isAlphaNum(ch){
+      return /[a-zA-Z0-9.]/.test(ch);
+    }
+
+    function findMatchingParen(text, startIndex){
+      let depth = 0;
+      for(let i = startIndex; i < text.length; i++){
+        if(text[i] === '(') depth++;
+        else if(text[i] === ')'){
+          depth--;
+          if(depth === 0) return i;
+        }
+      }
+      return -1;
+    }
+
+    function convertRootsToPowers(expr){
+      let s = expr;
+
+      while(s.includes('√(')){
+        let idx = s.indexOf('√(');
+        let start = idx + 1;
+        let end = findMatchingParen(s, start);
+        if(end === -1) break;
+        const inside = s.slice(start + 1, end);
+        s = s.slice(0, idx) + '((' + inside + ')^(1/2))' + s.slice(end + 1);
+      }
+
+      let changed = true;
+      while(changed){
+        changed = false;
+        let result = '';
+        for(let i = 0; i < s.length; i++){
+          if(s[i] === '√'){
+            const next = s[i + 1];
+            if(next && isAlphaNum(next)){
+              result += '((' + next + ')^(1/2))';
+              i += 1;
+              changed = true;
+            }else{
+              result += s[i];
+            }
+          }else{
+            result += s[i];
+          }
+        }
+        s = result;
+      }
+
       return s;
     }
 
@@ -462,13 +570,24 @@
       }
     }
 
-    function sideToLatex(expr){
-      const cleaned = normalizeExpr(expr);
+    function displayExprToLatex(expr){
+      const cleaned = expr.trim();
       if(!cleaned) return '\\square';
+
+      let latexSrc = cleaned;
+
+      latexSrc = latexSrc.replace(/√\(([^()]*)\)/g, 'sqrt($1)');
+      latexSrc = latexSrc.replace(/√([a-zA-Z0-9.]+)/g, 'sqrt($1)');
+
       try{
-        return nerdamer.convertToLaTeX(cleaned);
+        return nerdamer.convertToLaTeX(latexSrc);
       }catch(e){
-        return cleaned;
+        try{
+          const normalized = normalizeExpr(cleaned);
+          return nerdamer.convertToLaTeX(normalized);
+        }catch(e2){
+          return cleaned;
+        }
       }
     }
 
@@ -477,8 +596,9 @@
       const right = row.querySelector('.right-input').value.trim();
       const preview = row.querySelector('.eq-preview');
 
-      const leftLatex = sideToLatex(left);
-      const rightLatex = sideToLatex(right);
+      const leftLatex = displayExprToLatex(left);
+      const rightLatex = displayExprToLatex(right);
+
       renderLatex(preview, `${leftLatex} = ${rightLatex}`);
     }
 
@@ -488,9 +608,16 @@
 
     function getEquationObjects(){
       return getRows().map(row => {
-        const left = normalizeExpr(row.querySelector('.left-input').value);
-        const right = normalizeExpr(row.querySelector('.right-input').value);
-        return { row, left, right };
+        const leftInput = row.querySelector('.left-input');
+        const rightInput = row.querySelector('.right-input');
+
+        const leftDisplay = leftInput.value;
+        const rightDisplay = rightInput.value;
+
+        const left = normalizeExpr(leftDisplay);
+        const right = normalizeExpr(rightDisplay);
+
+        return { row, left, right, leftDisplay, rightDisplay };
       }).filter(item => item.left || item.right);
     }
 
@@ -518,6 +645,51 @@
       }
     }
 
+    function insertAtCursor(input, text){
+      input.focus();
+      const start = input.selectionStart ?? input.value.length;
+      const end = input.selectionEnd ?? input.value.length;
+      input.value = input.value.slice(0, start) + text + input.value.slice(end);
+      const newPos = start + text.length;
+      input.setSelectionRange(newPos, newPos);
+      input.dispatchEvent(new Event('input'));
+    }
+
+    function createToolbar(row, leftInput, rightInput){
+      const toolbar = document.createElement('div');
+      toolbar.className = 'toolbar';
+
+      const symbols = ['+', '-', '*', '/', '^', '(', ')', '√'];
+
+      symbols.forEach(symbol => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'tool-btn';
+
+        if(symbol === '*') btn.textContent = '×';
+        else if(symbol === '/') btn.textContent = '÷';
+        else btn.textContent = symbol;
+
+        btn.addEventListener('click', () => {
+          const active = document.activeElement;
+          let target = leftInput;
+
+          if(active === rightInput) target = rightInput;
+          else if(active === leftInput) target = leftInput;
+
+          if(symbol === '√'){
+            insertAtCursor(target, '√');
+          }else{
+            insertAtCursor(target, symbol);
+          }
+        });
+
+        toolbar.appendChild(btn);
+      });
+
+      row.appendChild(toolbar);
+    }
+
     function createEquationRow(leftValue='', rightValue=''){
       if(getRows().length >= MAX_EQUATIONS){
         showWarning(`식은 최대 ${MAX_EQUATIONS}개까지 추가할 수 있어.`);
@@ -529,9 +701,9 @@
 
       row.innerHTML = `
         <div class="eq-inputs">
-          <input class="field left-input" type="text" autocomplete="off" spellcheck="false" placeholder="왼쪽 식 입력" value="${leftValue}">
+          <input class="field left-input" type="text" autocomplete="off" spellcheck="false" placeholder="왼쪽 식 입력" value="">
           <div class="eq-sign">=</div>
-          <input class="field right-input" type="text" autocomplete="off" spellcheck="false" placeholder="오른쪽 식 입력" value="${rightValue}">
+          <input class="field right-input" type="text" autocomplete="off" spellcheck="false" placeholder="오른쪽 식 입력" value="">
           <button class="remove-btn" type="button">×</button>
         </div>
         <div class="eq-preview">\\square = \\square</div>
@@ -543,15 +715,22 @@
       const rightInput = row.querySelector('.right-input');
       const removeBtn = row.querySelector('.remove-btn');
 
+      leftInput.value = leftValue;
+      rightInput.value = rightValue;
+
+      createToolbar(row, leftInput, rightInput);
+
       function onInput(e){
         const before = e.target.value;
         const after = sanitizeInput(before);
+
         if(before !== after){
           e.target.value = after;
-          showWarning('한글 또는 허용되지 않은 문자는 자동으로 제거됐어.');
+          showWarning('한글 자판 입력은 자동으로 영문으로 바꾸고, 허용되지 않은 문자는 제거했어.');
         }else{
           showWarning('');
         }
+
         updatePreviewForRow(row);
         updateAnalyzer();
       }
@@ -687,6 +866,7 @@
         }
 
         addMessage(`연립방정식으로 인식했어. 식 ${equations.length}개, 미지수 ${variables.length}개`);
+
         solved.forEach(pair => {
           if(Array.isArray(pair) && pair.length === 2){
             const [name, value] = pair;
@@ -744,7 +924,7 @@
         return;
       }
 
-      addMessage('식이 1개인데 미지수가 여러 개면 보통 해가 하나로 정해지지 않아.', true);
+      addMessage('식이 1개인데 미지수가 여러 개면 해가 하나로 정해지지 않을 수 있어.', true);
       addMessage('연립방정식처럼 식을 더 추가해줘.', true);
     }
 
