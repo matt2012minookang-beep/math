@@ -28,6 +28,7 @@
     }
 
     *{box-sizing:border-box}
+
     body{
       margin:0;
       min-height:100vh;
@@ -37,18 +38,18 @@
         radial-gradient(circle at top left, #1d4ed8 0%, transparent 28%),
         radial-gradient(circle at top right, #0ea5e9 0%, transparent 24%),
         linear-gradient(135deg, var(--bg1), var(--bg2));
-      padding:16px;
+      padding:14px;
     }
 
     .wrap{
-      width:min(1240px, 100%);
+      width:min(1150px, 100%);
       margin:0 auto;
       background:var(--panel);
       backdrop-filter: blur(14px);
       border:1px solid rgba(255,255,255,.09);
-      border-radius:28px;
+      border-radius:26px;
       box-shadow:var(--shadow);
-      padding:24px;
+      padding:20px;
     }
 
     .title{
@@ -58,31 +59,18 @@
       letter-spacing:-0.03em;
     }
 
-    .desc{
+    .only-help{
       color:var(--sub);
-      line-height:1.7;
       font-size:15px;
-      margin-bottom:18px;
-    }
-
-    .top-grid{
-      display:grid;
-      grid-template-columns: 1.5fr .9fr;
-      gap:18px;
-      align-items:start;
+      line-height:1.7;
+      margin-bottom:14px;
     }
 
     .card{
       background:rgba(2,8,23,.55);
       border:1px solid var(--line);
       border-radius:22px;
-      padding:18px;
-    }
-
-    .card-title{
-      font-size:18px;
-      font-weight:900;
-      margin-bottom:12px;
+      padding:16px;
     }
 
     .equation-list{
@@ -101,7 +89,7 @@
 
     .eq-inputs{
       display:grid;
-      grid-template-columns: 1fr auto 1fr auto;
+      grid-template-columns:1fr auto 1fr auto;
       gap:10px;
       align-items:center;
     }
@@ -130,6 +118,10 @@
       font-weight:600;
     }
 
+    .relation-wrap{
+      position:relative;
+    }
+
     .relation-btn{
       min-width:78px;
       height:52px;
@@ -141,26 +133,28 @@
       font-weight:900;
       border:1px solid #334155;
       cursor:pointer;
-      position:relative;
     }
 
-    .relation-btn:hover{ background:#1d2b42; transform:translateY(-1px); }
+    .relation-btn:hover{
+      background:#1d2b42;
+      transform:translateY(-1px);
+    }
 
     .relation-menu{
       position:absolute;
-      top:64px;
+      top:62px;
       left:50%;
       transform:translateX(-50%);
       z-index:30;
       display:none;
-      grid-template-columns: repeat(3, minmax(56px, 1fr));
+      grid-template-columns:repeat(3, 1fr);
       gap:8px;
       background:#0f172a;
       border:1px solid #334155;
       border-radius:14px;
       padding:10px;
       box-shadow:0 18px 40px rgba(0,0,0,.35);
-      min-width:230px;
+      min-width:220px;
     }
 
     .relation-menu.show{ display:grid; }
@@ -177,7 +171,9 @@
       border:1px solid #334155;
     }
 
-    .relation-item:hover{ background:#1d2b42; }
+    .relation-item:hover{
+      background:#1d2b42;
+    }
 
     .remove-btn{
       border:none;
@@ -193,7 +189,10 @@
       flex-shrink:0;
     }
 
-    .remove-btn:hover{ filter:brightness(1.08); transform:translateY(-1px); }
+    .remove-btn:hover{
+      filter:brightness(1.08);
+      transform:translateY(-1px);
+    }
 
     .eq-preview{
       margin-top:12px;
@@ -224,7 +223,7 @@
       border-radius:12px;
       background:#172133;
       color:#e5eefc;
-      font-size:18px;
+      font-size:17px;
       font-weight:900;
       cursor:pointer;
       border:1px solid #334155;
@@ -232,7 +231,10 @@
       padding:0 10px;
     }
 
-    .tool-btn:hover{ transform:translateY(-1px); background:#1d2b42; }
+    .tool-btn:hover{
+      transform:translateY(-1px);
+      background:#1d2b42;
+    }
 
     .controls{
       display:flex;
@@ -251,7 +253,9 @@
       transition:.18s ease;
     }
 
-    button:hover{ transform:translateY(-1px); }
+    button:hover{
+      transform:translateY(-1px);
+    }
 
     .btn-main{
       background:linear-gradient(135deg, var(--accent), #2563eb);
@@ -326,128 +330,82 @@
       color:#e2e8f0;
     }
 
-    .msg.error{ color:#fecaca; }
-
-    .side-box{
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-    }
-
-    .mini{
-      background:#0b1220;
-      border:1px solid #334155;
-      border-radius:18px;
-      padding:14px;
-    }
-
-    .mini-label{
-      color:var(--sub);
-      font-size:13px;
-      font-weight:800;
-      margin-bottom:8px;
-    }
-
-    .mini-value{
-      font-size:15px;
-      line-height:1.7;
-      color:#e2e8f0;
-      word-break:break-word;
-    }
-
-    .help{
-      margin-top:16px;
-      background:rgba(15,23,42,.42);
-      border:1px solid rgba(148,163,184,.18);
-      border-radius:16px;
-      padding:14px 16px;
-      color:var(--sub);
-      line-height:1.8;
-      font-size:14px;
-    }
-
-    .footer-note{
-      margin-top:10px;
-      color:#94a3b8;
-      font-size:13px;
-      line-height:1.7;
-    }
-
-    @media (max-width: 980px){
-      .top-grid{ grid-template-columns:1fr; }
+    .msg.error{
+      color:#fecaca;
     }
 
     @media (max-width: 720px){
       body{ padding:10px; }
+
       .wrap{
         padding:14px;
         border-radius:20px;
       }
-      .card{
-        padding:14px;
-        border-radius:18px;
-      }
+
       .eq-inputs{
         grid-template-columns:1fr;
         gap:8px;
       }
+
       .field{
         min-height:54px;
         font-size:19px;
         padding:12px 14px;
       }
+
       .relation-btn{
         width:100%;
         height:50px;
         font-size:22px;
       }
+
       .relation-menu{
         left:50%;
         transform:translateX(-50%);
         min-width:260px;
-        grid-template-columns: repeat(3, 1fr);
       }
+
       .remove-btn{
         width:100%;
         height:48px;
-        border-radius:12px;
       }
+
       .toolbar{ gap:6px; }
+
       .tool-btn{
         min-width:calc(25% - 5px);
         height:46px;
-        font-size:17px;
+        font-size:16px;
       }
+
       .controls{
         display:grid;
         grid-template-columns:1fr 1fr;
         gap:8px;
       }
+
       .controls button{
         width:100%;
         min-height:48px;
         padding:12px 10px;
         font-size:15px;
       }
+
       .controls button:first-child{
         grid-column:1 / -1;
       }
+
       .eq-preview{
         min-height:58px;
         font-size:20px;
         padding:8px;
       }
+
       .inline-result{
         padding:14px;
-        border-radius:16px;
       }
+
       .result-item{
-        padding:12px 14px;
-        border-radius:14px;
-      }
-      .msg{ font-size:15px; }
-      .help{
-        font-size:13px;
         padding:12px 14px;
       }
     }
@@ -456,73 +414,24 @@
 <body>
   <div class="wrap">
     <h1 class="title">방정식 계산 사이트</h1>
-    <div class="desc">
-      특수각은 정확한 값으로 먼저 처리해.  
-      그래서 <b>tan(30)</b>이면 <b>√3/3</b>과 근사값을 같이 보여줘.
-    </div>
+    <div class="only-help">가운데를 눌러 등호와 부등호를 바꿔보세요!</div>
 
-    <div class="top-grid">
-      <div class="card">
-        <div class="card-title">식 입력</div>
+    <div class="card">
+      <div id="equationList" class="equation-list"></div>
 
-        <div id="equationList" class="equation-list"></div>
-
-        <div class="controls">
-          <button id="addEqBtn" class="btn-green">식 추가</button>
-          <button id="solveBtn" class="btn-main">해 찾기</button>
-          <button id="clearBtn" class="btn-sub">모두 지우기</button>
-        </div>
-
-        <div id="warning" class="warning"></div>
-
-        <div class="inline-result">
-          <div class="chip">결과</div>
-          <div class="result-title">해 / 판정</div>
-          <div id="resultList" class="result-list">
-            <div class="msg">아직 계산하지 않았어.</div>
-          </div>
-          <div class="footer-note">
-            특수각은 정확한 값 우선, 그 아래에 근사값을 같이 보여줘.
-          </div>
-        </div>
-
-        <div class="help">
-          입력 예시<br>
-          • <b>tan(30)=x</b><br>
-          • <b>sin(45)=x</b><br>
-          • <b>cos(60)=x</b><br>
-          • <b>x^2=13</b><br>
-          • <b>log(100)=2</b><br>
-          • <b>ln(e^2)=2</b><br>
-          • <b>5!=120</b>
-        </div>
+      <div class="controls">
+        <button id="addEqBtn" class="btn-green">식 추가</button>
+        <button id="solveBtn" class="btn-main">해 찾기</button>
+        <button id="clearBtn" class="btn-sub">모두 지우기</button>
       </div>
 
-      <div class="side-box">
-        <div class="card">
-          <div class="card-title">자동 분석</div>
+      <div id="warning" class="warning"></div>
 
-          <div class="mini">
-            <div class="mini-label">식 개수</div>
-            <div id="eqCount" class="mini-value">0</div>
-          </div>
-
-          <div class="mini">
-            <div class="mini-label">감지된 미지수</div>
-            <div id="varList" class="mini-value">없음</div>
-          </div>
-
-          <div class="mini">
-            <div class="mini-label">판단</div>
-            <div id="modeText" class="mini-value">입력을 기다리는 중</div>
-          </div>
-
-          <div class="mini">
-            <div class="mini-label">특수각</div>
-            <div class="mini-value">
-              0°, 30°, 45°, 60°, 90°, 120°, 135°, 150°, 180°, 210°, 225°, 240°, 270°, 300°, 315°, 330°, 360° 를 정확값으로 처리해.
-            </div>
-          </div>
+      <div class="inline-result">
+        <div class="chip">결과</div>
+        <div class="result-title">해 / 판정</div>
+        <div id="resultList" class="result-list">
+          <div class="msg">아직 계산하지 않았어.</div>
         </div>
       </div>
     </div>
@@ -535,9 +444,6 @@
     const clearBtn = document.getElementById('clearBtn');
     const warning = document.getElementById('warning');
     const resultList = document.getElementById('resultList');
-    const eqCount = document.getElementById('eqCount');
-    const varList = document.getElementById('varList');
-    const modeText = document.getElementById('modeText');
 
     const MAX_EQUATIONS = 8;
     const RELATIONS = ['=', '>', '<', '>=', '<='];
@@ -553,22 +459,22 @@
 
     const EXACT_TRIG = {
       sin: {
-        0:'0', 30:'1/2', 45:'sqrt(2)/2', 60:'sqrt(3)/2', 90:'1',
-        120:'sqrt(3)/2', 135:'sqrt(2)/2', 150:'1/2', 180:'0',
-        210:'-1/2', 225:'-sqrt(2)/2', 240:'-sqrt(3)/2', 270:'-1',
-        300:'-sqrt(3)/2', 315:'-sqrt(2)/2', 330:'-1/2', 360:'0'
+        0:'0',30:'1/2',45:'sqrt(2)/2',60:'sqrt(3)/2',90:'1',
+        120:'sqrt(3)/2',135:'sqrt(2)/2',150:'1/2',180:'0',
+        210:'-1/2',225:'-sqrt(2)/2',240:'-sqrt(3)/2',270:'-1',
+        300:'-sqrt(3)/2',315:'-sqrt(2)/2',330:'-1/2',360:'0'
       },
       cos: {
-        0:'1', 30:'sqrt(3)/2', 45:'sqrt(2)/2', 60:'1/2', 90:'0',
-        120:'-1/2', 135:'-sqrt(2)/2', 150:'-sqrt(3)/2', 180:'-1',
-        210:'-sqrt(3)/2', 225:'-sqrt(2)/2', 240:'-1/2', 270:'0',
-        300:'1/2', 315:'sqrt(2)/2', 330:'sqrt(3)/2', 360:'1'
+        0:'1',30:'sqrt(3)/2',45:'sqrt(2)/2',60:'1/2',90:'0',
+        120:'-1/2',135:'-sqrt(2)/2',150:'-sqrt(3)/2',180:'-1',
+        210:'-sqrt(3)/2',225:'-sqrt(2)/2',240:'-1/2',270:'0',
+        300:'1/2',315:'sqrt(2)/2',330:'sqrt(3)/2',360:'1'
       },
       tan: {
-        0:'0', 30:'sqrt(3)/3', 45:'1', 60:'sqrt(3)',
-        120:'-sqrt(3)', 135:'-1', 150:'-sqrt(3)/3',
-        180:'0', 210:'sqrt(3)/3', 225:'1', 240:'sqrt(3)',
-        300:'-sqrt(3)', 315:'-1', 330:'-sqrt(3)/3', 360:'0'
+        0:'0',30:'sqrt(3)/3',45:'1',60:'sqrt(3)',
+        120:'-sqrt(3)',135:'-1',150:'-sqrt(3)/3',180:'0',
+        210:'sqrt(3)/3',225:'1',240:'sqrt(3)',300:'-sqrt(3)',
+        315:'-1',330:'-sqrt(3)/3',360:'0'
       }
     };
 
@@ -584,13 +490,6 @@
       return out;
     }
 
-    function sanitizeInput(value){
-      let v = convertKoreanKeyboardToEnglish(value);
-      v = v.replace(/×/g, '*').replace(/÷/g, '/');
-      v = v.replace(ALLOWED_REGEX, '');
-      return v;
-    }
-
     function normalizeAngleDeg(n){
       let a = Number(n);
       if (!Number.isFinite(a)) return null;
@@ -602,27 +501,23 @@
     function replaceExactTrig(expr){
       let s = expr;
 
-      const funcs = ['sin', 'cos', 'tan'];
-
-      for (const fn of funcs){
-        let changed = true;
-        while (changed){
-          changed = false;
-          const regex = new RegExp(fn + '\\\\(([-+]?\\d+(?:\\.\\d+)?)\\)', 'g');
-          s = s.replace(regex, (match, angleStr) => {
-            const ang = normalizeAngleDeg(angleStr);
-            if (ang === null) return match;
-            const exact = EXACT_TRIG[fn][String(ang)];
-            if (exact !== undefined){
-              changed = true;
-              return '(' + exact + ')';
-            }
-            return match;
-          });
-        }
+      for (const fn of ['sin', 'cos', 'tan']) {
+        s = s.replace(new RegExp(fn + '\\\\(([-+]?\\d+(?:\\.\\d+)?)\\)', 'g'), (_, angleStr) => {
+          const ang = normalizeAngleDeg(angleStr);
+          if (ang === null) return _;
+          const exact = EXACT_TRIG[fn][String(ang)];
+          return exact !== undefined ? '(' + exact + ')' : _;
+        });
       }
 
       return s;
+    }
+
+    function sanitizeInput(value){
+      let v = convertKoreanKeyboardToEnglish(value);
+      v = v.replace(/×/g, '*').replace(/÷/g, '/');
+      v = v.replace(ALLOWED_REGEX, '');
+      return v;
     }
 
     function isAlphaNum(ch){
@@ -807,16 +702,11 @@
       const cleaned = expr.trim();
       if(!cleaned) return '\\square';
 
-      let s = cleaned;
-      s = s.replace(/π/g, '\\pi ');
-      s = s.replace(/\bln\(/g, '\\ln(');
-      s = s.replace(/\blog\(/g, '\\log(');
-
       try{
-        let latexSrc = s
+        let latexSrc = cleaned
           .replace(/√\(([^()]*)\)/g, 'sqrt($1)')
-          .replace(/√([a-zA-Z0-9.π]+)/g, 'sqrt($1)');
-        latexSrc = latexSrc.replace(/π/g, 'pi');
+          .replace(/√([a-zA-Z0-9.π]+)/g, 'sqrt($1)')
+          .replace(/π/g, 'pi');
         latexSrc = replaceExactTrig(latexSrc);
         return nerdamer.convertToLaTeX(latexSrc);
       }catch(e){
@@ -862,36 +752,6 @@
 
         return { row, left, right, relation, leftDisplay, rightDisplay };
       }).filter(item => item.left || item.right);
-    }
-
-    function updateAnalyzer(){
-      const eqs = getEquationObjects();
-      const text = eqs.map(e => `${e.left}${e.relation}${e.right}`).join(' ');
-      const vars = detectVariablesFromText(text);
-      const hasIneq = eqs.some(e => e.relation !== '=');
-
-      eqCount.textContent = String(eqs.length);
-      varList.textContent = vars.length ? vars.join(', ') : '없음';
-
-      if(eqs.length === 0){
-        modeText.textContent = '입력을 기다리는 중';
-        return;
-      }
-
-      if(hasIneq){
-        modeText.textContent = '부등식 / 혼합식 포함';
-        return;
-      }
-
-      if(vars.length === 0){
-        modeText.textContent = '숫자식 비교';
-      }else if(eqs.length === 1 && vars.length === 1){
-        modeText.textContent = '단일 미지수 방정식 풀이';
-      }else if(eqs.length >= 2 && vars.length >= 1){
-        modeText.textContent = '연립방정식 풀이';
-      }else{
-        modeText.textContent = '식 구조 분석 중';
-      }
     }
 
     function setActiveSide(row, side){
@@ -966,7 +826,6 @@
           relationBtn.textContent = rel;
           menu.classList.remove('show');
           updatePreviewForRow(row);
-          updateAnalyzer();
         });
 
         menu.appendChild(item);
@@ -996,7 +855,9 @@
       row.innerHTML = `
         <div class="eq-inputs">
           <input class="field left-input" type="text" autocomplete="off" spellcheck="false" placeholder="왼쪽 식 입력" value="">
-          <button class="relation-btn" type="button">${relation}</button>
+          <div class="relation-wrap">
+            <button class="relation-btn" type="button">${relation}</button>
+          </div>
           <input class="field right-input" type="text" autocomplete="off" spellcheck="false" placeholder="오른쪽 식 입력" value="">
           <button class="remove-btn" type="button">×</button>
         </div>
@@ -1030,7 +891,6 @@
 
         setActiveSide(row, e.target === rightInput ? 'right' : 'left');
         updatePreviewForRow(row);
-        updateAnalyzer();
       }
 
       function onFocus(e){
@@ -1065,15 +925,12 @@
           relationBtn.textContent = '=';
           setActiveSide(row, 'left');
           updatePreviewForRow(row);
-          updateAnalyzer();
           return;
         }
         row.remove();
-        updateAnalyzer();
       });
 
       updatePreviewForRow(row);
-      updateAnalyzer();
     }
 
     function clearResults(){
@@ -1108,7 +965,7 @@
     }
 
     function addExactApproxResult(varName, exactExpr){
-      let exactLatex = '';
+      let exactLatex;
       try{
         exactLatex = `${varName} = ${nerdamer.convertToLaTeX(String(exactExpr))}`;
       }catch(e){
@@ -1119,6 +976,34 @@
       const approx = formatApprox(exactExpr);
       if(approx !== null){
         addLatexResult(`\\text{근사값}\\; ${varName} \\approx ${approx}`);
+      }
+    }
+
+    function compareNumbers(l, r, relation){
+      if(relation === '=') return l === r;
+      if(relation === '>') return l > r;
+      if(relation === '<') return l < r;
+      if(relation === '>=') return l >= r;
+      if(relation === '<=') return l <= r;
+      return false;
+    }
+
+    function solveNoVariable(left, right, relation){
+      try{
+        const lText = nerdamer(left).evaluate().text();
+        const rText = nerdamer(right).evaluate().text();
+        const lNum = Number(lText);
+        const rNum = Number(rText);
+
+        if(Number.isFinite(lNum) && Number.isFinite(rNum)){
+          addMessage(compareNumbers(lNum, rNum, relation) ? '참이야.' : '거짓이야.', !compareNumbers(lNum, rNum, relation));
+          addLatexResult(`\\text{왼쪽} = ${nerdamer.convertToLaTeX(lText)}`);
+          addLatexResult(`\\text{오른쪽} = ${nerdamer.convertToLaTeX(rText)}`);
+        } else {
+          addMessage('계산할 수 없어.', true);
+        }
+      } catch {
+        addMessage('계산할 수 없어.', true);
       }
     }
 
@@ -1142,72 +1027,58 @@
       return [text];
     }
 
-    function solveSingleNoVariable(left, right, relation){
+    function solveSingleEquationOneVar(left, right, variable){
       try{
-        const l = Number(nerdamer(left).evaluate().text());
-        const r = Number(nerdamer(right).evaluate().text());
-        let ok = false;
+        if(left === variable){
+          addExactApproxResult(variable, right);
+          return true;
+        }
+        if(right === variable){
+          addExactApproxResult(variable, left);
+          return true;
+        }
 
-        if(relation === '=') ok = (l === r);
-        if(relation === '>') ok = (l > r);
-        if(relation === '<') ok = (l < r);
-        if(relation === '>=') ok = (l >= r);
-        if(relation === '<=') ok = (l <= r);
+        const solved = nerdamer.solve(`(${left})-(${right})`, variable);
+        const arr = getSolutionsStringArray(solved).map(v => v.trim()).filter(Boolean);
+        const unique = [...new Set(arr)];
 
-        addMessage(ok ? '참이야.' : '거짓이야.', !ok);
-        addLatexResult(`\\text{왼쪽} \\approx ${formatApprox(left) ?? l}`);
-        addLatexResult(`\\text{오른쪽} \\approx ${formatApprox(right) ?? r}`);
-      } catch (e){
-        addMessage('숫자식 계산에 실패했어. 입력을 다시 확인해줘.', true);
-      }
+        if(unique.length){
+          unique.forEach(sol => addExactApproxResult(variable, sol));
+          return true;
+        }
+      } catch {}
+
+      try{
+        const eqStrings = [`${left}=${right}`];
+        const solved = nerdamer.solveEquations(eqStrings);
+        if(Array.isArray(solved) && solved.length){
+          for(const pair of solved){
+            if(Array.isArray(pair) && pair[0] === variable){
+              addExactApproxResult(variable, pair[1]);
+              return true;
+            }
+          }
+        }
+      } catch {}
+
+      return false;
     }
 
-    function solveSingleEquationOneVar(left, right, variable){
-      const equationExpr = `(${left})-(${right})`;
-
+    function solveSystem(equations, variables){
       try{
-        const solved = nerdamer.solve(equationExpr, variable);
-        const arr = getSolutionsStringArray(solved)
-          .map(v => v.trim())
-          .filter(Boolean);
-
-        if(!arr.length){
+        const solved = nerdamer.solveEquations(equations.map(e => `${e.left}=${e.right}`));
+        if(!Array.isArray(solved) || !solved.length){
           addMessage('해를 찾지 못했어.', true);
           return;
         }
 
-        const unique = [...new Set(arr)];
-
-        addMessage(`단일 미지수 방정식으로 인식했어. 미지수: ${variable}`);
-        addMessage(`찾은 해 개수: ${unique.length}`);
-
-        unique.forEach(sol => addExactApproxResult(variable, sol));
-      }catch(e){
-        addMessage('이 식의 해를 찾지 못했어. 식 형태를 다시 확인해줘.', true);
-      }
-    }
-
-    function solveSystem(equations, variables){
-      const eqStrings = equations.map(e => `${e.left}=${e.right}`);
-
-      try{
-        const solved = nerdamer.solveEquations(eqStrings);
-
-        if(!solved || !Array.isArray(solved) || !solved.length){
-          addMessage('연립방정식의 해를 찾지 못했어.', true);
-          return;
-        }
-
-        addMessage(`연립방정식으로 인식했어. 식 ${equations.length}개, 미지수 ${variables.length}개`);
-
-        solved.forEach(pair => {
+        for(const pair of solved){
           if(Array.isArray(pair) && pair.length === 2){
-            const [name, value] = pair;
-            addExactApproxResult(name, value);
+            addExactApproxResult(pair[0], pair[1]);
           }
-        });
-      }catch(e){
-        addMessage('이 연립방정식은 현재 브라우저 버전에서 풀 수 없거나, 식 수가 부족하거나, 해가 복잡할 수 있어.', true);
+        }
+      } catch {
+        addMessage('해를 찾지 못했어.', true);
       }
     }
 
@@ -1215,34 +1086,29 @@
       try{
         const diff = nerdamer(`expand((${left})-(${right}))`).toString();
         const a = Number(nerdamer(`diff(${diff}, ${variable})`).evaluate().text());
-        const bExpr = nerdamer(diff).sub(variable, 0).evaluate().text();
-        const b = Number(bExpr);
+        const b = Number(nerdamer(diff).sub(variable, 0).evaluate().text());
 
         if(!Number.isFinite(a) || !Number.isFinite(b) || a === 0){
-          addMessage('이 부등식은 현재 버전에서 자동 해석 범위를 벗어났어.', true);
+          addMessage('해를 찾지 못했어.', true);
           return;
         }
 
         const boundary = -b / a;
-        let finalRelation = relation;
+        let rel = relation;
 
         if(a < 0){
-          if(relation === '>') finalRelation = '<';
-          else if(relation === '<') finalRelation = '>';
-          else if(relation === '>=') finalRelation = '<=';
-          else if(relation === '<=') finalRelation = '>=';
+          if(rel === '>') rel = '<';
+          else if(rel === '<') rel = '>';
+          else if(rel === '>=') rel = '<=';
+          else if(rel === '<=') rel = '>=';
         }
 
-        let latex = '';
-        if(finalRelation === '>') latex = `${variable} > ${boundary}`;
-        if(finalRelation === '<') latex = `${variable} < ${boundary}`;
-        if(finalRelation === '>=') latex = `${variable} \\ge ${boundary}`;
-        if(finalRelation === '<=') latex = `${variable} \\le ${boundary}`;
-
-        addMessage('일차부등식으로 인식했어.');
-        addLatexResult(latex);
-      } catch (e){
-        addMessage('이 부등식은 현재 버전에서 자동으로 풀지 못했어.', true);
+        if(rel === '>') addLatexResult(`${variable} > ${boundary}`);
+        if(rel === '<') addLatexResult(`${variable} < ${boundary}`);
+        if(rel === '>=') addLatexResult(`${variable} \\ge ${boundary}`);
+        if(rel === '<=') addLatexResult(`${variable} \\le ${boundary}`);
+      } catch {
+        addMessage('해를 찾지 못했어.', true);
       }
     }
 
@@ -1271,14 +1137,14 @@
 
       if(hasIneq){
         if(equations.length > 1){
-          addMessage('지금 버전은 부등식 여러 줄이 섞인 연립부등식은 아직 완전 지원하지 않아.', true);
+          addMessage('해를 찾지 못했어.', true);
           return;
         }
 
         const eq = equations[0];
 
         if(variables.length === 0){
-          solveSingleNoVariable(eq.left, eq.right, eq.relation);
+          solveNoVariable(eq.left, eq.right, eq.relation);
           return;
         }
 
@@ -1287,21 +1153,22 @@
           return;
         }
 
-        addMessage('미지수가 여러 개인 부등식은 아직 지원하지 않아.', true);
+        addMessage('해를 찾지 못했어.', true);
         return;
       }
 
       if(variables.length === 0){
         if(equations.length === 1){
-          solveSingleNoVariable(equations[0].left, equations[0].right, '=');
-        }else{
-          addMessage('미지수가 없는 식이 여러 개야. 지금은 미지수 있는 식 풀이용으로 쓰는 게 좋아.', true);
+          solveNoVariable(equations[0].left, equations[0].right, '=');
+        } else {
+          addMessage('해를 찾지 못했어.', true);
         }
         return;
       }
 
       if(equations.length === 1 && variables.length === 1){
-        solveSingleEquationOneVar(equations[0].left, equations[0].right, variables[0]);
+        const ok = solveSingleEquationOneVar(equations[0].left, equations[0].right, variables[0]);
+        if(!ok) addMessage('해를 찾지 못했어.', true);
         return;
       }
 
@@ -1310,8 +1177,7 @@
         return;
       }
 
-      addMessage('식이 1개인데 미지수가 여러 개면 해가 하나로 정해지지 않을 수 있어.', true);
-      addMessage('연립식처럼 식을 더 추가해줘.', true);
+      addMessage('해를 찾지 못했어.', true);
     }
 
     addEqBtn.addEventListener('click', () => {
@@ -1327,7 +1193,6 @@
       createEquationRow('', '', '=');
       createEquationRow('', '', '=');
       showWarning('');
-      updateAnalyzer();
     });
 
     document.addEventListener('click', (e) => {
