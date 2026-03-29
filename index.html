@@ -39,7 +39,7 @@
       padding:14px;
     }
     .wrap{
-      width:min(1150px, 100%);
+      width:min(1200px, 100%);
       margin:0 auto;
       background:var(--panel);
       backdrop-filter: blur(14px);
@@ -60,12 +60,44 @@
       line-height:1.7;
       margin-bottom:14px;
     }
+
+    .layout{
+      display:grid;
+      grid-template-columns: 1.45fr 0.85fr;
+      gap:16px;
+      align-items:start;
+    }
+
     .card{
       background:rgba(2,8,23,.55);
       border:1px solid var(--line);
       border-radius:22px;
       padding:16px;
     }
+
+    .analysis-grid{
+      display:grid;
+      gap:12px;
+    }
+    .mini{
+      background:#0b1220;
+      border:1px solid #334155;
+      border-radius:16px;
+      padding:14px;
+    }
+    .mini-label{
+      color:var(--sub);
+      font-size:13px;
+      font-weight:800;
+      margin-bottom:8px;
+    }
+    .mini-value{
+      font-size:15px;
+      line-height:1.7;
+      color:#e2e8f0;
+      word-break:break-word;
+    }
+
     .equation-list{
       display:flex;
       flex-direction:column;
@@ -151,6 +183,7 @@
       border:1px solid #334155;
     }
     .relation-item:hover{ background:#1d2b42; }
+
     .remove-btn{
       border:none;
       cursor:pointer;
@@ -168,6 +201,7 @@
       filter:brightness(1.08);
       transform:translateY(-1px);
     }
+
     .eq-preview{
       margin-top:12px;
       min-height:64px;
@@ -182,6 +216,7 @@
       padding:10px;
       font-size:24px;
     }
+
     .toolbar{
       margin-top:12px;
       display:flex;
@@ -206,6 +241,7 @@
       transform:translateY(-1px);
       background:#1d2b42;
     }
+
     .controls{
       display:flex;
       gap:10px;
@@ -237,6 +273,7 @@
       color:#fff;
       box-shadow:0 12px 28px rgba(34,197,94,.22);
     }
+
     .warning{
       min-height:20px;
       color:#fecaca;
@@ -244,6 +281,7 @@
       font-weight:800;
       margin-top:8px;
     }
+
     .inline-result{
       margin-top:14px;
       background:rgba(2,8,23,.82);
@@ -286,6 +324,12 @@
       color:#e2e8f0;
     }
     .msg.error{ color:#fecaca; }
+
+    @media (max-width: 980px){
+      .layout{
+        grid-template-columns:1fr;
+      }
+    }
 
     @media (max-width: 720px){
       body{ padding:10px; }
@@ -351,22 +395,45 @@
     <h1 class="title">방정식 계산 사이트</h1>
     <div class="only-help">가운데를 눌러 등호와 부등호를 바꿔보세요!</div>
 
-    <div class="card">
-      <div id="equationList" class="equation-list"></div>
+    <div class="layout">
+      <div class="card">
+        <div id="equationList" class="equation-list"></div>
 
-      <div class="controls">
-        <button id="addEqBtn" class="btn-green">식 추가</button>
-        <button id="solveBtn" class="btn-main">해 찾기</button>
-        <button id="clearBtn" class="btn-sub">모두 지우기</button>
+        <div class="controls">
+          <button id="addEqBtn" class="btn-green">식 추가</button>
+          <button id="solveBtn" class="btn-main">해 찾기</button>
+          <button id="clearBtn" class="btn-sub">모두 지우기</button>
+        </div>
+
+        <div id="warning" class="warning"></div>
+
+        <div class="inline-result">
+          <div class="chip">결과</div>
+          <div class="result-title">해 / 판정</div>
+          <div id="resultList" class="result-list">
+            <div class="msg">아직 계산하지 않았어.</div>
+          </div>
+        </div>
       </div>
 
-      <div id="warning" class="warning"></div>
-
-      <div class="inline-result">
-        <div class="chip">결과</div>
-        <div class="result-title">해 / 판정</div>
-        <div id="resultList" class="result-list">
-          <div class="msg">아직 계산하지 않았어.</div>
+      <div class="card">
+        <div class="analysis-grid">
+          <div class="mini">
+            <div class="mini-label">식 개수</div>
+            <div id="analysisCount" class="mini-value">0</div>
+          </div>
+          <div class="mini">
+            <div class="mini-label">감지된 미지수</div>
+            <div id="analysisVars" class="mini-value">없음</div>
+          </div>
+          <div class="mini">
+            <div class="mini-label">식 종류</div>
+            <div id="analysisMode" class="mini-value">입력 대기 중</div>
+          </div>
+          <div class="mini">
+            <div class="mini-label">현재 관계</div>
+            <div id="analysisRelations" class="mini-value">없음</div>
+          </div>
         </div>
       </div>
     </div>
@@ -379,6 +446,11 @@
     const clearBtn = document.getElementById('clearBtn');
     const warning = document.getElementById('warning');
     const resultList = document.getElementById('resultList');
+
+    const analysisCount = document.getElementById('analysisCount');
+    const analysisVars = document.getElementById('analysisVars');
+    const analysisMode = document.getElementById('analysisMode');
+    const analysisRelations = document.getElementById('analysisRelations');
 
     const MAX_EQUATIONS = 8;
     const RELATIONS = ['=', '>', '<', '>=', '<='];
@@ -733,6 +805,7 @@
           relationBtn.textContent = rel;
           menu.classList.remove('show');
           updatePreviewForRow(row);
+          updateAnalysis();
         });
 
         menu.appendChild(item);
@@ -799,6 +872,7 @@
 
         setActiveSide(row, e.target === rightInput ? 'right' : 'left');
         updatePreviewForRow(row);
+        updateAnalysis();
       }
 
       function onFocus(e){
@@ -834,12 +908,15 @@
           relationBtn.textContent = '=';
           setActiveSide(row, 'left');
           updatePreviewForRow(row);
+          updateAnalysis();
           return;
         }
         row.remove();
+        updateAnalysis();
       });
 
       updatePreviewForRow(row);
+      updateAnalysis();
     }
 
     function getRows(){
@@ -864,6 +941,52 @@
           right: normalizeExpr(rightDisplay)
         };
       }).filter(item => item.leftDisplay || item.rightDisplay);
+    }
+
+    function detectVariablesFromText(text){
+      const raw = text.match(/[a-zA-Z]+/g) || [];
+      const banned = new Set(['e', 'pi', 'sin', 'cos', 'tan', 'log', 'ln', 'factorial', 'sqrt']);
+      return [...new Set(raw.filter(v => !banned.has(v.toLowerCase())))];
+    }
+
+    function updateAnalysis(){
+      const equations = getEquationObjects();
+      analysisCount.textContent = String(equations.length);
+
+      if(!equations.length){
+        analysisVars.textContent = '없음';
+        analysisMode.textContent = '입력 대기 중';
+        analysisRelations.textContent = '없음';
+        return;
+      }
+
+      const text = equations.map(e => `${e.left}${e.relation}${e.right}`).join(' ');
+      const vars = detectVariablesFromText(text);
+      analysisVars.textContent = vars.length ? vars.join(', ') : '없음';
+
+      const relations = [...new Set(equations.map(e => e.relation))];
+      analysisRelations.textContent = relations.join(', ');
+
+      const hasIneq = equations.some(e => e.relation !== '=');
+
+      if(hasIneq){
+        if(equations.length === 1 && vars.length <= 1){
+          analysisMode.textContent = '부등식';
+        } else {
+          analysisMode.textContent = '복합식';
+        }
+        return;
+      }
+
+      if(vars.length === 0){
+        analysisMode.textContent = '수치 비교';
+      } else if(equations.length === 1 && vars.length === 1){
+        analysisMode.textContent = '단일 미지수 방정식';
+      } else if(equations.length >= 2){
+        analysisMode.textContent = '연립방정식';
+      } else {
+        analysisMode.textContent = '식 분석 중';
+      }
     }
 
     function clearResults(){
@@ -1006,34 +1129,44 @@
       return false;
     }
 
-    function detectVariablesFromText(text){
-      const raw = text.match(/[a-zA-Z]+/g) || [];
-      const banned = new Set(['e', 'pi', 'sin', 'cos', 'tan', 'log', 'ln', 'factorial', 'sqrt']);
-      return [...new Set(raw.filter(v => !banned.has(v.toLowerCase())))];
-    }
-
     function solveSimpleLinearInequality(left, right, relation, variable){
       try{
         const diff = nerdamer(`expand((${left})-(${right}))`).toString();
-        const a = Number(nerdamer(`diff(${diff}, ${variable})`).evaluate().text());
-        const b = Number(nerdamer(diff).sub(variable, 0).evaluate().text());
+        const aExpr = nerdamer(`diff(${diff}, ${variable})`).toString();
+        const bExpr = nerdamer(diff).sub(variable, 0).toString();
 
-        if(!Number.isFinite(a) || !Number.isFinite(b) || a === 0) return false;
+        const aNum = Number(nerdamer(aExpr).evaluate().text());
+        if(!Number.isFinite(aNum) || aNum === 0) return false;
 
-        const boundary = -b / a;
+        let boundaryExpr = `(-(${bExpr}))/(${aExpr})`;
+        boundaryExpr = nerdamer(boundaryExpr).toString();
+
         let rel = relation;
-
-        if(a < 0){
+        if(aNum < 0){
           if(rel === '>') rel = '<';
           else if(rel === '<') rel = '>';
           else if(rel === '>=') rel = '<=';
           else if(rel === '<=') rel = '>=';
         }
 
-        if(rel === '>') addLatexResult(`${variable} > ${boundary}`);
-        if(rel === '<') addLatexResult(`${variable} < ${boundary}`);
-        if(rel === '>=') addLatexResult(`${variable} \\ge ${boundary}`);
-        if(rel === '<=') addLatexResult(`${variable} \\le ${boundary}`);
+        let exactRelLatex = '';
+        if(rel === '>') exactRelLatex = `${variable} > ${nerdamer.convertToLaTeX(boundaryExpr)}`;
+        if(rel === '<') exactRelLatex = `${variable} < ${nerdamer.convertToLaTeX(boundaryExpr)}`;
+        if(rel === '>=') exactRelLatex = `${variable} \\ge ${nerdamer.convertToLaTeX(boundaryExpr)}`;
+        if(rel === '<=') exactRelLatex = `${variable} \\le ${nerdamer.convertToLaTeX(boundaryExpr)}`;
+
+        addLatexResult(exactRelLatex);
+
+        const approx = formatApprox(boundaryExpr);
+        if(approx !== null){
+          let approxRelLatex = '';
+          if(rel === '>') approxRelLatex = `\\text{근사값}\\; ${variable} > ${approx}`;
+          if(rel === '<') approxRelLatex = `\\text{근사값}\\; ${variable} < ${approx}`;
+          if(rel === '>=') approxRelLatex = `\\text{근사값}\\; ${variable} \\ge ${approx}`;
+          if(rel === '<=') approxRelLatex = `\\text{근사값}\\; ${variable} \\le ${approx}`;
+          addLatexResult(approxRelLatex);
+        }
+
         return true;
       } catch {}
       return false;
@@ -1122,6 +1255,7 @@
       createEquationRow('', '', '=');
       createEquationRow('', '', '=');
       showWarning('');
+      updateAnalysis();
     });
 
     document.addEventListener('click', (e) => {
@@ -1132,6 +1266,7 @@
 
     createEquationRow('', '', '=');
     createEquationRow('', '', '=');
+    updateAnalysis();
   </script>
 </body>
 </html>
